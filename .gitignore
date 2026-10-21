@@ -1,0 +1,24 @@
+# Ignore everything by default
+/*
+
+# Track .gitignore
+!/.gitignore
+
+# Allow wp-content
+!/wp-content/
+/wp-content/*
+
+# Allow themes
+!/wp-content/themes/
+/wp-content/themes/*
+
+# Track only our custom theme
+!/wp-content/themes/growmodo-custom/
+
+# Ignore local development files
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+.env
+.env.*
