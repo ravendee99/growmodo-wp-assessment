@@ -15,6 +15,8 @@ A custom classic WordPress theme built for the Growmodo WordPress Developer tech
 
 ## Architecture
 
+The theme lives at `wp-content/themes/growmodo-custom/`:
+
 ```
 growmodo-custom/
 ├── style.css                Theme header plus all styles

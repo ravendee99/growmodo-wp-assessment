@@ -1,8 +1,9 @@
 # Ignore everything by default
 /*
 
-# Track .gitignore
+# Track .gitignore and the project README
 !/.gitignore
+!/README.md
 
 # Allow wp-content
 !/wp-content/
