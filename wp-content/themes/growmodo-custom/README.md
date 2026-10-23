@@ -1,111 +1,104 @@
 # Growmodo Custom – Estatein WordPress Theme
 
-A custom classic WordPress theme built for the Growmodo WordPress Developer technical assessment. It recreates the **Estatein** real estate design (Figma "Real Estate Business Website UI Template – Dark Theme") as a hand-coded theme with no page builder, no plugins, and no front-end libraries.
+A custom classic WordPress theme built for the Growmodo WordPress Developer technical assessment. It implements the **Estatein** real estate design (Figma "Real Estate Business Website UI Template – Dark Theme") without page builders, plugins, or front-end libraries.
 
 - **Live demo:** https://estatein-demo.infy.click
 - **Theme directory:** `wp-content/themes/growmodo-custom/`
 
-## Technologies and tools
+## Stack
 
-- WordPress (classic PHP theme), developed locally on WordPress 7.1 and PHP 8.2 with Local by Flywheel
-- PHP templates and template parts using core WordPress APIs only
-- A single hand-written stylesheet (`style.css`) using CSS custom properties, Flexbox, and Grid
-- Vanilla JavaScript (`assets/js/navigation.js`), with no jQuery or build step
-- Urbanist font from Google Fonts
-- Figma Dev Mode as the design reference; images and icons were exported from the Figma file
+- WordPress 7.1.3 (local development site, Local by Flywheel, PHP 8.2). The theme header declares WordPress 6.4+ and PHP 8.0+.
+- Classic PHP templates using only core WordPress APIs
+- One hand-written, mobile-first stylesheet (`style.css`) built on CSS custom properties, Flexbox, and Grid
+- Vanilla JavaScript (`assets/js/navigation.js`); no jQuery and no build step
+- The Urbanist font, loaded from Google Fonts, and assets exported from the Figma file
 
-## Theme architecture
+## Architecture
 
 ```
 growmodo-custom/
-├── style.css                  Theme header plus all styles (mobile-first)
-├── functions.php              Setup, asset loading, and helper functions
-├── header.php / footer.php    Shared header, navigation, CTA, and footer
-├── front-page.php             Home page
-├── page-{slug}.php            About Us, Properties, Seaside Serenity Villa, Services, Contact Us
-├── index.php                  Fallback for posts, archives, and search
-├── template-parts/            One file per page section, grouped by page
-│   ├── about/  contact/  properties/  property/  services/
-│   └── hero, featured-properties, testimonials, faq, cta, property-card, ...
-└── assets/
-    ├── icons/                 SVG icons
-    ├── images/                Page imagery and decorative SVGs, grouped by page
-    └── js/navigation.js       All front-end interactions
+├── style.css                Theme header plus all styles
+├── functions.php            Theme setup, asset loading, helpers
+├── header.php / footer.php  Shared banner, navigation, CTA, footer
+├── front-page.php           Home
+├── page-{slug}.php          About Us, Properties, Seaside Serenity Villa, Services, Contact Us
+├── index.php                Fallback for posts, archives, and search
+├── template-parts/          One file per section, grouped by page
+└── assets/                  icons/, images/ (grouped by page), js/navigation.js
 ```
 
-Each page template only assembles its sections with `get_template_part()`, so every section stays in its own file. `functions.php` registers the theme supports (title tag, custom logo, post thumbnails, HTML5 markup, responsive embeds) and the `primary` and `footer` menu locations. It also enqueues the font, stylesheet, and script, and defines three small helpers:
+Each page template only calls `get_template_part()` for its sections, so every section lives in its own file.
 
-- `growmodo_custom_image()` and `growmodo_custom_icon()` print escaped `<img>` tags with explicit width and height. They lazy-load by default and can mark a hero image with `fetchpriority`.
-- `growmodo_custom_destination()` resolves a page permalink by slug and falls back to a home-page anchor when that page doesn't exist, so internal links don't break on a fresh install.
+`functions.php` registers the theme supports (title tag, custom logo, thumbnails, HTML5) and the `primary` and `footer` menu locations. It enqueues the font and the stylesheet, plus the deferred script, and defines three helpers:
+
+- `growmodo_custom_image()` and `growmodo_custom_icon()` print escaped `<img>` tags with explicit dimensions. Images are lazy-loaded by default, and `fetchpriority` can be set where needed.
+- `growmodo_custom_destination()` returns a page's permalink by slug. If the page doesn't exist, it falls back to an anchor on the home page.
 
 ## Implemented pages and features
 
 | Page | Sections |
 | --- | --- |
 | Home | Hero with stats and feature cards, Featured Properties, Testimonials, FAQ |
-| About Us | Our Journey, Our Values, Our Achievements, How It Works steps, Team, Valued Clients |
-| Properties | Search hero with filter chips, property listing carousel, inquiry form |
-| Seaside Serenity Villa | Photo gallery slideshow, inquiry form, pricing details, property FAQ |
-| Services | Service shortcut cards and three service sections with CTA cards |
-| Contact Us | Contact method cards, contact form, office tabs, photo gallery |
+| About Us | Journey, Values, Achievements, How It Works, Team, Clients |
+| Properties | Search hero with filter chips, listing carousel, inquiry form |
+| Seaside Serenity Villa | Gallery slideshow, inquiry form, pricing, FAQ |
+| Services | Shortcut cards and three service sections |
+| Contact Us | Contact cards, contact form, office tabs, photo gallery |
 
-Every page shares the announcement banner, the header, the "Start Your Real Estate Journey Today" CTA, and the footer.
+All pages share the announcement banner, the header, the CTA, and the footer.
 
-Working interactions, all in `navigation.js`:
+These interactions are implemented in `navigation.js`:
 
-- A mobile menu toggle that updates `aria-expanded` and closes on Escape, on an outside click, or when the viewport reaches desktop width
-- A dismissible announcement banner that stays hidden for the browser session (`sessionStorage`)
-- Carousels with previous/next buttons that scroll one card at a time and disable themselves at either end
-- "Read More" / "Read Less" toggles on the property card descriptions
-- The property gallery slideshow, with page dots and thumbnails
-- Office filter tabs on the Contact page (All, Regional, International)
-- Browser validation on every form, followed by an on-page confirmation message
+- **Mobile menu:** uses `aria-expanded` and closes on Escape, on an outside click, or when the viewport widens to desktop.
+- **Announcement banner:** can be dismissed and stays hidden for the browser session.
+- **Carousels:** previous/next buttons scroll one card at a time.
+- **Property cards:** "Read More" / "Read Less" toggles.
+- **Villa gallery:** slideshow with dots and thumbnails.
+- **Contact page:** office filter tabs.
+- **Forms:** browser validation, then an on-page confirmation message.
 
-## Content management approach
+## Content management
 
-The page content (copy, cards, testimonials, FAQs, team members, office details) is defined as PHP arrays inside each template part and wrapped in translatable, escaped strings (`esc_html_e()`, `__()`, `esc_url()`, `esc_attr()`). That kept the build close to the design and quick to ship, but it means content changes need code edits, not the WordPress editor.
+Page copy, cards, FAQs, and team and office details are defined as PHP arrays in the template parts, as translatable, escaped strings. This kept the build close to the design, but it means content edits require code changes.
 
-What *is* manageable from the admin:
+From the admin you can manage:
 
-- **Pages:** each page is a regular WordPress page, and its template is chosen by slug.
-- **Primary navigation:** a menu assigned to the `primary` location replaces the built-in fallback menu.
-- **Logo:** a custom logo set in the Customizer replaces the default SVG.
+- **Pages:** the template is selected by slug.
+- **Primary menu:** a built-in fallback is used until a menu is assigned to the `primary` location.
+- **Logo:** set through the Customizer.
 
 ## Responsive design
 
-The stylesheet is mobile-first, with breakpoints at `40rem`, `48rem`, `64rem`, `80rem`, and `99.75rem`. Shared values such as font sizes, spacing, and radii live in CSS custom properties and change at those breakpoints.
+The stylesheet is mobile-first, with breakpoints at `40rem`, `48rem`, `64rem`, `80rem`, and `99.75rem`. Font sizes, spacing, and radii change at those breakpoints through CSS custom properties.
 
-The layouts follow the Figma frames at 1920px (desktop), 1440px (laptop), and 390px (mobile). The content width is 1596px on desktop and 1280px on laptop, with 16px side margins on mobile. The header, CTA, and footer have dedicated laptop and mobile layouts that apply on every page. On mobile that includes a collapsible menu and a two-column footer link grid. The Home page has also been checked section by section against the laptop and mobile frames. I checked every page for horizontal overflow at 390px, 1440px, and 1920px.
+Layouts follow the Figma desktop (1920), laptop (1440), and mobile (390) frames. The content width is 1596px on desktop, 1280px on laptop, and full width minus 16px margins on mobile.
+
+The shared header, CTA, and footer, and the Home page, have dedicated laptop and mobile styles. On mobile this includes a collapsible menu and a two-column footer link grid.
 
 ## Performance, SEO, and accessibility
 
-**Performance:** the front end loads one stylesheet and one deferred script, with no jQuery or third-party libraries. Both assets are versioned from the theme version for cache busting. Images carry explicit dimensions, load lazily unless they're above the fold, and decode asynchronously. The hero image uses `fetchpriority="high"`. The theme adds `preconnect` hints for Google Fonts.
-
-**SEO:** WordPress manages the document title via `title-tag` support. Pages use a heading hierarchy with one `h1` on Home, Properties, the villa page, Services, and Contact. The markup uses semantic landmarks (`header`, `nav`, `main`, `section`, `footer`). The theme does not output meta descriptions or structured data; that is left to an SEO plugin.
-
-**Accessibility:**
-
-- A skip link, labelled navigation regions, and `aria-current` on the active page
-- Screen-reader text for icon-only buttons and for form fields that only show a placeholder visually
-- Descriptive `alt` text on content images; decorative images have an empty `alt`
-- Visible `:focus-visible` outlines
-- Smooth scrolling and transitions turn off under `prefers-reduced-motion`
+- **Performance:** one stylesheet and one deferred script, both versioned from the theme version. Images have explicit dimensions, use lazy loading and async decoding, and the hero image uses `fetchpriority="high"`. Google Fonts gets `preconnect` hints.
+- **SEO:** the document title comes from WordPress via `title-tag` support. Markup uses semantic landmarks and a heading hierarchy. The theme outputs no meta descriptions or structured data.
+- **Accessibility:**
+  - Skip link, labelled navigation, and `aria-current` on the active page
+  - Screen-reader labels for icon-only buttons and for fields that show only a placeholder
+  - `alt` text on content images, empty `alt` on decorative ones
+  - Visible `:focus-visible` outlines
+  - A `prefers-reduced-motion` fallback
 
 ## Local installation
 
-1. Install WordPress (6.4 or newer, PHP 8.0 or newer). Local by Flywheel works well.
-2. Copy `growmodo-custom` into `wp-content/themes/` and activate it under **Appearance → Themes**.
-3. Create published pages with these slugs: `about-us`, `properties`, `seaside-serenity-villa`, `services`, and `contact-us`. The page content can stay empty, since the templates are selected by slug.
-4. Optional: under **Settings → Reading**, set a static front page. `front-page.php` renders the home page in either case.
-5. Optional: set **Settings → Permalinks** to "Post name" for clean URLs.
+1. Install WordPress 6.4 or newer, on PHP 8.0 or newer.
+2. Copy `growmodo-custom` into `wp-content/themes/` and activate it.
+3. Publish pages with the slugs `about-us`, `properties`, `seaside-serenity-villa`, `services`, and `contact-us`. Their content can stay empty.
+4. Optional: set **Settings → Permalinks** to "Post name".
 
 ## Known limitations
 
-- **Forms don't send data.** The contact, property inquiry, and newsletter forms validate in the browser and then show a "this preview does not send…" message. Nothing is emailed or stored.
-- **Property search is visual only.** Submitting the search does nothing, and the filter chips don't filter. The listings are static.
-- **Static placeholders:** the carousel counters (for example "01 of 60") don't change. The FAQ "Read More", "Get Direction", "Visit Website", and social links are placeholders.
-- **No content model.** There is no custom post type for properties and no custom fields, so all content lives in the template files.
-- **One detail page.** Only the Seaside Serenity Villa page is built; other property cards link to it or to the Properties page.
-- **About Us has no `h1`.** It opens with the "Our Journey" `h2`, as in the design.
-- **Footer menu location unused.** The `footer` location is registered, but the footer links are hard-coded to match the design.
-- **Responsive review in progress.** Of the inner pages, only the shared header, CTA, and footer have been reviewed against the laptop and mobile frames. About, Properties, the villa page, Services, and Contact are still pending their own section-by-section review.
+- **Forms:** the contact, inquiry, and newsletter forms don't send or store anything. They only validate in the browser and show a preview message.
+- **Property search:** submitting the search and the filter chips have no effect, and the listings are static.
+- **Placeholders:** carousel counters ("01 of 60"), the FAQ "Read More" buttons, "Get Direction", "Visit Website", and the social links are static or non-functional.
+- **Content model:** there's no property post type and no custom fields. Only the Seaside Serenity Villa detail page exists.
+- **Footer menu:** the `footer` location is registered, but the footer links are hard-coded.
+- **Headings:** the About page has no `h1`; it opens with an `h2`, as in the design.
+- **Responsive work:** About, Properties, Villa, Services, and Contact still need their section-level laptop and mobile refinement.
